@@ -70,6 +70,6 @@ app.use((err, req, res, next) => {
 	}
 });
 
-Apps.insertMany(data);
+// Apps.insertMany(data);
 
 module.exports = app;
