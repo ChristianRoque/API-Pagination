@@ -1,6 +1,8 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
+const data = require('./bin/seeds');
+const Apps = require('./models/App');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -39,7 +41,7 @@ app.use(cookieParser());
 // Example: http://localhost:5000/favicon.ico => Display "~/client/build/favicon.ico"
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-app.use('/apps', require('./routes/index'));
+app.use('/', require('./routes/index'));
 
 // For any routes that starts with "/api", catch 404 and forward to error handler
 app.use('/api/*', (req, res, next) => {
@@ -67,5 +69,7 @@ app.use((err, req, res, next) => {
 		else res.json(JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))));
 	}
 });
+
+Apps.insertMany(data);
 
 module.exports = app;
