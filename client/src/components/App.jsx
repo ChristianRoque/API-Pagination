@@ -3,21 +3,44 @@ import axios from 'axios';
 // import { Route, Link, NavLink, Switch } from 'react-router-dom';
 
 export default class App extends Component {
-	state = {};
+	state = {
+		params: { range: { by: 'id' } }
+	};
 
 	componentDidMount = () => {
-		axios.post('http://localhost:5000/apps', { range: { by: 'id', start: 1, max: 10 } }).then((result) => {
+		axios.post('http://localhost:5000/apps', this.state.params).then((result) => {
 			this.setState({
-				data: result
+				data: result.data
 			});
 		});
 	};
 
-	dataDisplay = () => {
-		this.state.data.map((hell) => {
-			console.log(hell);
+	handleInputChange = (event) => {
+		this.setState({
+			[event.target.name]: event.target.value
 		});
-		return <div>This loaded.</div>;
+	};
+
+	dataDisplay = () => {
+		console.log(this.state.data);
+		let display = this.state.data.map((value, i) => {
+			return (
+				<div key={i} className="result">
+					<div>
+						<img
+							className="appPicture"
+							src="https://images.idgesg.net/images/article/2019/07/ios13-app-store-hero-100802526-large.jpg"
+						/>
+					</div>
+					<div>
+						<p>{value.name}</p>
+					</div>
+				</div>
+			);
+		});
+		this.setState({
+			render: display
+		});
 	};
 
 	render() {
@@ -26,8 +49,11 @@ export default class App extends Component {
 		}
 		return (
 			<div className="App">
-				HERE WE GO
-				{this.dataDisplay()}
+				<div>
+					<input onChange={this.handleInputChange} name="by" placeholder="Order by" />
+					<button onClick={this.dataDisplay}> Render Results</button>
+				</div>
+				<div className="resultContainer"> {this.state.render} </div>
 			</div>
 		);
 	}

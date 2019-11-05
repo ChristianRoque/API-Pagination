@@ -1,30 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const Apps = require('../models/App');
+var deparam = require('can-deparam');
 
-router.post('/apps', (req, res, next) => {
+router.get('/apps', (req, res, next) => {
+	let string = req.originalUrl.replace('/apps', '');
+	let data = deparam(string);
+
 	// Need seach by parameter
-	const by = req.body.range.by;
+
+	const by = data.range.by;
 	if (!by) {
 		res.json('Please include a mode of search. Example => { by: name }. Allowed values: name, id.');
 	}
 	// Defining the range for search
-	const start = Number(req.body.range.start);
-	const end = Number(req.body.range.end);
-	const max = Number(req.body.range.max);
+	const start = Number(data.range.start);
+	const end = Number(data.range.end);
+	const max = Number(data.range.max);
 
 	let arr = [];
 
 	for (let i = start || 1; i <= (end || max || 50); i++) {
 		let digits = i.toString().padStart(3, '0');
-		by == 'id' ? arr.push(id) : arr.push(`my-app-${digits}`);
+		by == 'id' ? arr.push(i) : arr.push(`my-app-${digits}`);
 	}
 
 	// Output based on order wanted
-	const orderBy = req.body.range.order;
+	const orderBy = data.range.order;
 
-	if (orderBy != 'asc' && orderBy != 'desc') {
-		res.json("'Please include valid value for order. Example => { order: asc }. Allowed values: asc, desc.'");
+	if (orderBy) {
+		if (orderBy != 'asc' && orderBy != 'desc') {
+			res.json("'Please include valid value for order. Example => { order: asc }. Allowed values: asc, desc.'");
+		}
 	}
 
 	order = (data, ordering) => {
@@ -32,7 +39,7 @@ router.post('/apps', (req, res, next) => {
 			return data.sort((a, b) => {
 				return a.id - b.id;
 			});
-		} else {
+		} else if (ordering == 'desc') {
 			return data.sort((a, b) => {
 				return b.id - a.id;
 			});
@@ -42,7 +49,7 @@ router.post('/apps', (req, res, next) => {
 	// Searches for the first x amount of apps starting in y index based on either id or name.
 
 	Apps.find({ [by]: { $in: arr } }).then((result) => {
-		if (!order) {
+		if (!orderBy) {
 			res.json(result);
 		} else {
 			res.json(order(result, orderBy));
