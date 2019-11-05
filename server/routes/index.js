@@ -48,7 +48,7 @@ router.get('/apps', (req, res, next) => {
 
 	// Searches for the first x amount of apps starting in y index based on either id or name.
 
-	Apps.find({ [by]: { $in: arr } }).then((result) => {
+	Apps.find({ [by]: { $in: arr } }, { _id: 0 }).then((result) => {
 		if (!orderBy) {
 			res.json(result);
 		} else {
