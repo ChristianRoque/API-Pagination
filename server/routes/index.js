@@ -57,4 +57,18 @@ router.get('/apps', (req, res, next) => {
 	});
 });
 
+// router.get('/builMongoDB', (req, res, next) => {
+// 	for (let i = 0; i < 200; i++) {
+// 		let digits = i.toString().padStart(3, '0');
+// 		let name = `my-app-${digits}`;
+// 		Apps.create({
+// 			id: i,
+// 			name: name
+// 		});
+// 	}
+// 	Apps.find().then((results) => {
+// 		res.json(results);
+// 	});
+// });
+
 module.exports = router;
